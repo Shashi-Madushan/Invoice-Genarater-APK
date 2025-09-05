@@ -1,39 +1,45 @@
-import { View, Text } from "react-native"
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState
-} from "react"
-import { onAuthStateChanged, User } from "firebase/auth"
 import { auth } from "@/firebaseConfig"
+import { onAuthStateChanged, User } from "firebase/auth"
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
 
-const AuthContext = createContext<{ user: User | null; loading: boolean }>({
+interface AuthContextType {
+  user: User | null
+  loading: boolean
+}
+
+const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true
 })
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [state, setState] = useState<AuthContextType>({
+    user: null,
+    loading: true
+  })
 
   useEffect(() => {
-    const unsubcribe = onAuthStateChanged(auth, (user) => {
-      setUser(user ?? null)
-      setLoading(false)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setState({
+        user: user,
+        loading: false
+      })
     })
 
-    return unsubcribe
+    return () => unsubscribe()
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={state}>
       {children}
     </AuthContext.Provider>
   )
 }
 
 export const useAuth = () => {
-  return useContext(AuthContext)
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
+  return context
 }
