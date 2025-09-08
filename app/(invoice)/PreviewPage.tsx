@@ -48,6 +48,60 @@ export default function PreviewPage() {
           </View>
         )}
       </ScrollView>
+      {/* Action Buttons */}
+      <SafeAreaView
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'white',
+          padding: 16,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          borderTopWidth: 1,
+          borderColor: '#eee',
+        }}
+        edges={["bottom"]}
+      >
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text
+              style={{
+                backgroundColor: '#e5e7eb',
+                color: '#374151',
+                fontWeight: '600',
+                textAlign: 'center',
+                paddingVertical: 12,
+                borderRadius: 9999,
+              }}
+              onPress={() => {
+                // Navigate to FormPage for editing
+                // Pass invoiceData as param
+                // You may need to update FormPage to accept invoiceData param
+                // For now, just go back
+                window.location.href = '/FormPage';
+              }}
+            >Edit</Text>
+          </View>
+          <View style={{ flex: 1, marginLeft: 8 }}>
+            <Text
+              style={{
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                fontWeight: '600',
+                textAlign: 'center',
+                paddingVertical: 12,
+                borderRadius: 9999,
+              }}
+              onPress={() => {
+                // Save functionality placeholder
+                console.log('Save invoice:', data);
+              }}
+            >Save</Text>
+          </View>
+        </View>
+      </SafeAreaView>
     </SafeAreaView>
   );
 }
