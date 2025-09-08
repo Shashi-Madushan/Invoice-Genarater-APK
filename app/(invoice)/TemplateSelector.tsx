@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Template1 } from "../../components/templates/Template1-minimalModern";
-import { Template2 } from "../../components/templates/Template2–CleanCorporate";
+import Template1 from "../../components/templates/Template1-minimalModern";
+import Template2 from "../../components/templates/Template2–CleanCorporate";
 import { InvoiceData } from "../../types/invoice";
 
 const dummyData: InvoiceData = {

@@ -4,13 +4,6 @@ import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-nativ
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomerDetails, InvoiceItem, ShopDetails } from "../../types/invoice";
 
-function formatDate(dateStr: string) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-}
-
 export default function FormPage() {
   const { templateId } = useLocalSearchParams();
   const router = useRouter();
@@ -108,6 +101,34 @@ export default function FormPage() {
     });
   };
 
+  // Dummy data for development
+  const dummyShopDetails: ShopDetails = {
+    name: "Demo Shop",
+    address: "123 Main St, City",
+    phone: "1234567890",
+    email: "shop@example.com",
+  };
+  const dummyCustomerDetails: CustomerDetails = {
+    name: "John Doe",
+    address: "456 Elm St, City",
+    phone: "0987654321",
+    email: "customer@example.com",
+  };
+  const dummyItems: InvoiceItem[] = [
+    { name: "Item A", quantity: 2, price: 50, discount: 5 },
+    { name: "Item B", quantity: 1, price: 100, discount: 10 },
+  ];
+
+  const handleUseDummyData = () => {
+    setStoreName("Demo Store");
+    setLogoUrl("https://dummyimage.com/100x100/000/fff.png&text=Logo");
+    setDate("2024-06-01");
+    setShopDetails(dummyShopDetails);
+    setCustomerDetails(dummyCustomerDetails);
+    setItems(dummyItems);
+    setErrors([]);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView
@@ -129,6 +150,12 @@ export default function FormPage() {
             ))}
           </View>
         )}
+        <TouchableOpacity
+          className="bg-yellow-400 px-6 py-3 rounded-full mb-4"
+          onPress={handleUseDummyData}
+        >
+          <Text className="text-black font-semibold text-center">Use Dummy Data</Text>
+        </TouchableOpacity>
 
         {/* Store Name */}
         <Text className="mt-4 font-semibold">Store Name</Text>
@@ -156,11 +183,6 @@ export default function FormPage() {
           onChangeText={setDate}
           placeholder="Date (YYYY-MM-DD)"
         />
-        {date ? (
-          <Text style={{ color: "#2563eb", marginBottom: 8 }}>
-            Formatted: {formatDate(date)}
-          </Text>
-        ) : null}
 
         {/* Shop Details */}
         <Text className="mt-4 font-semibold">Shop Details</Text>
