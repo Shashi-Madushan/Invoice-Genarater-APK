@@ -7,6 +7,7 @@ import { InvoiceData } from "../../types/invoice";
 import Template1 from "../../components/templates/Template1-minimalModern";
 import Template2 from "../../components/templates/Template2–CleanCorporate";
 // Add more templates as needed
+import { generateInvoicePDF } from '../../utils/pdfGenerator';
 
 // Accept fullPage prop in template components
 const templates: Record<string, React.ComponentType<{ data: InvoiceData; fullPage?: boolean }>> = {
@@ -95,8 +96,8 @@ export default function PreviewPage() {
                 borderRadius: 9999,
               }}
               onPress={() => {
-                // Save functionality placeholder
-                console.log('Save invoice:', data);
+                // Save functionality: generate and download PDF
+                generateInvoicePDF(data);
               }}
             >Save</Text>
           </View>
