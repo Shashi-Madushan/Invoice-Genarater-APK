@@ -90,9 +90,12 @@ export default function EditInvoicePage() {
         email: shopDetails.email?.trim(),
       },
     };
-    // Pass updated data back (could use router.replace or a callback)
-    router.back();
-    // Optionally, you can use router.replace or a callback to update parent state
+    router.replace({
+      pathname: "/(invoice)/PreviewPage",
+      params: {
+        invoiceData: JSON.stringify(updatedInvoiceData),
+      },
+    });
   };
 
   const handleClose = () => {
