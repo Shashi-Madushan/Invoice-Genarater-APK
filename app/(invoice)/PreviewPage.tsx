@@ -1,6 +1,6 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InvoiceData } from "../../types/invoice";
 // Import your template components
@@ -21,6 +21,7 @@ const templates: Record<string, React.ComponentType<{ data: InvoiceData; fullPag
 };
 
 export default function PreviewPage() {
+  const router = useRouter();
   const { invoiceData } = useLocalSearchParams();
   // Get current user
   const currentUser = getCurrentUser();
@@ -44,69 +45,45 @@ export default function PreviewPage() {
   // Select the template component
   const TemplateComponent = templates[data.templateId] || null;
 
+  const handleEdit = () => {
+    router.push({
+      pathname: "/(invoice)/EditInvoicePage",
+      params: {
+        invoiceData: JSON.stringify(data),
+      },
+    });
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingVertical: 24 }}>
-        <Text className="text-2xl font-bold mb-4 text-center">Invoice Preview</Text>
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView className="flex-1 py-6 px-4" contentContainerStyle={{ paddingBottom: 24 }}>
+        <Text className="text-2xl font-bold mb-4 text-center text-black">Invoice Preview</Text>
         {TemplateComponent ? (
           <TemplateComponent data={data} fullPage={true} />
         ) : (
-          <View style={{ padding: 16 }}>
+          <View className="p-4">
             <Text className="text-red-500">Selected template not found.</Text>
           </View>
         )}
       </ScrollView>
       {/* Action Buttons */}
-      <SafeAreaView
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'white',
-          padding: 16,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          borderTopWidth: 1,
-          borderColor: '#eee',
-        }}
-        edges={["bottom"]}
-      >
-        <View style={{ flexDirection: 'row', width: '100%' }}>
-          <View style={{ flex: 1, marginRight: 8 }}>
-            <Text
-              style={{
-                backgroundColor: '#e5e7eb',
-                color: '#374151',
-                fontWeight: '600',
-                textAlign: 'center',
-                paddingVertical: 12,
-                borderRadius: 9999,
-              }}
-              onPress={() => {
-                // Navigate to FormPage for editing
-                // Pass invoiceData as param
-                // You may need to update FormPage to accept invoiceData param
-                // For now, just go back
-                window.location.href = '/FormPage';
-              }}
-            >Edit</Text>
+      <SafeAreaView className="absolute left-0 right-0 bottom-0 bg-white px-4 py-4 flex-row justify-between border-t border-gray-200" edges={["bottom"]}>
+        <View className="flex-row w-full">
+          <View className="flex-1 mr-2">
+            <TouchableOpacity
+              className="bg-purple-600 px-6 py-3 rounded-xl"
+              onPress={handleEdit}
+            >
+              <Text className="text-white font-semibold text-center">Edit</Text>
+            </TouchableOpacity>
           </View>
-          <View style={{ flex: 1, marginLeft: 8 }}>
-            <Text
-              style={{
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                fontWeight: '600',
-                textAlign: 'center',
-                paddingVertical: 12,
-                borderRadius: 9999,
-              }}
-              onPress={() => {
-                // Save functionality: generate and download PDF
-                generateInvoicePDF(data, data.templateId, userId);
-              }}
-            >Save</Text>
+          <View className="flex-1 ml-2">
+            <TouchableOpacity
+              className="bg-blue-600 px-6 py-3 rounded-xl"
+              onPress={() => generateInvoicePDF(data, data.templateId, userId)}
+            >
+              <Text className="text-white font-semibold text-center">Save</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
