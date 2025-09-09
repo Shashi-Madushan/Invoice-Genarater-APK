@@ -17,12 +17,13 @@ export default function FormPage() {
   const [items, setItems] = useState<InvoiceItem[]>([
     { name: "", quantity: 1, price: 0 }
   ]);
+  const [totalDiscount, setTotalDiscount] = useState(0);
   const [errors, setErrors] = useState<string[]>([]);
 
   // Calculate totals
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = items.reduce((sum, item) => sum + (item.discount || 0), 0);
-  const grandTotal = subtotal - discount;
+  const grandTotal = subtotal - discount - totalDiscount;
 
   // Handlers for items
   const handleItemChange = (idx: number, field: keyof InvoiceItem, value: any) => {
@@ -56,6 +57,7 @@ export default function FormPage() {
       if (isNaN(item.price) || item.price < 0) errs.push(`Item ${idx + 1}: Price must be a non-negative number.`);
       if (item.discount !== undefined && (isNaN(item.discount) || item.discount < 0)) errs.push(`Item ${idx + 1}: Discount must be a non-negative number.`);
     });
+    if (totalDiscount !== undefined && (isNaN(totalDiscount) || totalDiscount < 0)) errs.push("Total Discount must be a non-negative number.");
     return errs;
   };
 
@@ -75,7 +77,7 @@ export default function FormPage() {
         price: Number(item.price),
         discount: item.discount !== undefined && item.discount !== null && String(item.discount) !== "" ? Number(item.discount) : undefined,
       })),
-      totals: { subtotal, discount, grandTotal },
+      totals: { subtotal, discount, totalDiscount, grandTotal },
       customerDetails: {
         ...customerDetails,
         name: customerDetails.name.trim(),
@@ -126,220 +128,229 @@ export default function FormPage() {
     setShopDetails(dummyShopDetails);
     setCustomerDetails(dummyCustomerDetails);
     setItems(dummyItems);
+    setTotalDiscount(0);
     setErrors([]);
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView className="flex-1 bg-white">
       <ScrollView
-        style={{ flex: 1, paddingHorizontal: 16, paddingTop: 24 }}
+        className="flex-1 px-4 pt-8"
         contentContainerStyle={{ paddingBottom: 120 }}
         keyboardShouldPersistTaps="handled"
       >
-        <Text className="text-xl font-bold mb-4 text-center">Invoice Form</Text>
-        <Text className="text-base text-gray-700 mb-2 text-center">
-          Selected Template ID:{" "}
-          <Text className="font-semibold text-blue-500">{templateId}</Text>
+        <Text className="text-2xl font-bold mb-2 text-center text-black">Invoice Form</Text>
+        <Text className="text-base text-gray-700 mb-4 text-center">
+          Selected Template ID: <Text className="font-semibold text-purple-600">{templateId}</Text>
         </Text>
 
         {/* Validation Errors */}
         {errors.length > 0 && (
-          <View style={{ marginBottom: 12 }}>
+          <View className="mb-4">
             {errors.map((err, idx) => (
-              <Text key={idx} style={{ color: "red", marginBottom: 2 }}>{err}</Text>
+              <Text key={idx} className="text-red-500 text-sm mb-1">{err}</Text>
             ))}
           </View>
         )}
         <TouchableOpacity
-          className="bg-yellow-400 px-6 py-3 rounded-full mb-4"
+          className="bg-purple-100 px-6 py-3 rounded-xl mb-4 border border-purple-300"
           onPress={handleUseDummyData}
         >
-          <Text className="text-black font-semibold text-center">Use Dummy Data</Text>
+          <Text className="text-purple-700 font-semibold text-center">Use Dummy Data</Text>
         </TouchableOpacity>
 
         {/* Store Name */}
-        <Text className="mt-4 font-semibold">Store Name</Text>
+        <Text className="mt-2 font-semibold text-black">Store Name</Text>
         <TextInput
-          className="border rounded px-3 py-2 mb-2"
+          className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
           value={storeName}
           onChangeText={setStoreName}
           placeholder="Store Name"
+          placeholderTextColor="#888"
         />
 
         {/* Logo URL */}
-        <Text className="font-semibold">Logo URL</Text>
+        <Text className="font-semibold text-black">Logo URL</Text>
         <TextInput
-          className="border rounded px-3 py-2 mb-2"
+          className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
           value={logoUrl}
           onChangeText={setLogoUrl}
           placeholder="Logo URL (optional)"
+          placeholderTextColor="#888"
         />
 
         {/* Date */}
-        <Text className="font-semibold">Date</Text>
+        <Text className="font-semibold text-black">Date</Text>
         <TextInput
-          className="border rounded px-3 py-2 mb-2"
+          className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
           value={date}
           onChangeText={setDate}
           placeholder="Date (YYYY-MM-DD)"
+          placeholderTextColor="#888"
         />
 
         {/* Shop Details */}
-        <Text className="mt-4 font-semibold">Shop Details</Text>
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={shopDetails.name}
-          onChangeText={name => setShopDetails({ ...shopDetails, name })}
-          placeholder="Shop Name"
-        />
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={shopDetails.address || ""}
-          onChangeText={address => setShopDetails({ ...shopDetails, address })}
-          placeholder="Shop Address"
-        />
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={shopDetails.phone || ""}
-          onChangeText={phone => setShopDetails({ ...shopDetails, phone })}
-          placeholder="Shop Phone"
-          keyboardType="phone-pad"
-        />
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={shopDetails.email || ""}
-          onChangeText={email => setShopDetails({ ...shopDetails, email })}
-          placeholder="Shop Email"
-          keyboardType="email-address"
-        />
+        <Text className="mt-4 font-semibold text-black">Shop Details</Text>
+        <View className="space-y-2 mb-2">
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={shopDetails.name}
+            onChangeText={name => setShopDetails({ ...shopDetails, name })}
+            placeholder="Shop Name"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={shopDetails.address || ""}
+            onChangeText={address => setShopDetails({ ...shopDetails, address })}
+            placeholder="Shop Address"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={shopDetails.phone || ""}
+            onChangeText={phone => setShopDetails({ ...shopDetails, phone })}
+            placeholder="Shop Phone"
+            keyboardType="phone-pad"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={shopDetails.email || ""}
+            onChangeText={email => setShopDetails({ ...shopDetails, email })}
+            placeholder="Shop Email"
+            keyboardType="email-address"
+            placeholderTextColor="#888"
+          />
+        </View>
 
         {/* Customer Details */}
-        <Text className="mt-4 font-semibold">Customer Details</Text>
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={customerDetails.name}
-          onChangeText={name => setCustomerDetails({ ...customerDetails, name })}
-          placeholder="Customer Name"
-        />
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={customerDetails.address || ""}
-          onChangeText={address => setCustomerDetails({ ...customerDetails, address })}
-          placeholder="Customer Address"
-        />
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={customerDetails.phone || ""}
-          onChangeText={phone => setCustomerDetails({ ...customerDetails, phone })}
-          placeholder="Customer Phone"
-          keyboardType="phone-pad"
-        />
-        <TextInput
-          className="border rounded px-3 py-2 mb-2"
-          value={customerDetails.email || ""}
-          onChangeText={email => setCustomerDetails({ ...customerDetails, email })}
-          placeholder="Customer Email"
-          keyboardType="email-address"
-        />
+        <Text className="mt-4 font-semibold text-black">Customer Details</Text>
+        <View className="space-y-2 mb-2">
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={customerDetails.name}
+            onChangeText={name => setCustomerDetails({ ...customerDetails, name })}
+            placeholder="Customer Name"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={customerDetails.address || ""}
+            onChangeText={address => setCustomerDetails({ ...customerDetails, address })}
+            placeholder="Customer Address"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={customerDetails.phone || ""}
+            onChangeText={phone => setCustomerDetails({ ...customerDetails, phone })}
+            placeholder="Customer Phone"
+            keyboardType="phone-pad"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+            value={customerDetails.email || ""}
+            onChangeText={email => setCustomerDetails({ ...customerDetails, email })}
+            placeholder="Customer Email"
+            keyboardType="email-address"
+            placeholderTextColor="#888"
+          />
+        </View>
 
         {/* Items */}
-        <Text className="mt-4 font-semibold">Invoice Items</Text>
-        {items.map((item, idx) => (
-          <View key={idx} className="border rounded p-2 mb-2">
-            <TextInput
-              className="border rounded px-3 py-2 mb-2"
-              value={item.name}
-              onChangeText={name => handleItemChange(idx, "name", name)}
-              placeholder="Item Name"
-            />
-            <TextInput
-              className="border rounded px-3 py-2 mb-2"
-              value={item.quantity.toString()}
-              onChangeText={quantity => handleItemChange(idx, "quantity", quantity)}
-              placeholder="Quantity"
-              keyboardType="numeric"
-            />
-            <TextInput
-              className="border rounded px-3 py-2 mb-2"
-              value={item.price.toString()}
-              onChangeText={price => handleItemChange(idx, "price", price)}
-              placeholder="Price"
-              keyboardType="numeric"
-            />
-            <TextInput
-              className="border rounded px-3 py-2 mb-2"
-              value={item.discount?.toString() || ""}
-              onChangeText={discount => handleItemChange(idx, "discount", discount)}
-              placeholder="Discount (optional)"
-              keyboardType="numeric"
-            />
-            <TouchableOpacity
-              className="bg-red-200 px-4 py-2 rounded-full self-end"
-              onPress={() => handleRemoveItem(idx)}
-              disabled={items.length === 1}
-            >
-              <Text className="text-red-700 font-semibold">Remove</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+        <Text className="mt-4 font-semibold text-black">Invoice Items</Text>
+        <View className="space-y-4">
+          {items.map((item, idx) => (
+            <View key={idx} className="border border-gray-200 rounded-xl p-4 bg-gray-50">
+              <TextInput
+                className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+                value={item.name}
+                onChangeText={name => handleItemChange(idx, "name", name)}
+                placeholder="Item Name"
+                placeholderTextColor="#888"
+              />
+              <View className="flex-row space-x-2">
+                <TextInput
+                  className="mt-2 mb-3 flex-1 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+                  value={item.quantity.toString()}
+                  onChangeText={quantity => handleItemChange(idx, "quantity", quantity)}
+                  placeholder="Quantity"
+                  keyboardType="numeric"
+                  placeholderTextColor="#888"
+                />
+                <TextInput
+                  className="mt-2 mb-3 flex-1 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+                  value={item.price.toString()}
+                  onChangeText={price => handleItemChange(idx, "price", price)}
+                  placeholder="Price"
+                  keyboardType="numeric"
+                  placeholderTextColor="#888"
+                />
+                <TextInput
+                  className="mt-2 mb-3 flex-1 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+                  value={item.discount?.toString() || ""}
+                  onChangeText={discount => handleItemChange(idx, "discount", discount)}
+                  placeholder="Discount (optional)"
+                  keyboardType="numeric"
+                  placeholderTextColor="#888"
+                />
+              </View>
+              <TouchableOpacity
+                className={`bg-red-100 px-4 py-2 rounded-full self-end mt-2 ${items.length === 1 ? 'opacity-50' : ''}`}
+                onPress={() => handleRemoveItem(idx)}
+                disabled={items.length === 1}
+              >
+                <Text className="text-red-700 font-semibold">Remove</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
         <TouchableOpacity
-          className="bg-green-500 px-6 py-3 rounded-full mb-4"
+          className="bg-purple-600 px-6 py-3 rounded-xl mt-4 mb-4"
           onPress={handleAddItem}
         >
           <Text className="text-white font-semibold text-center">Add Item</Text>
         </TouchableOpacity>
 
+        {/* Total Discount */}
+        <Text className="font-semibold text-black mt-4">Total Discount (optional)</Text>
+        <TextInput
+          className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
+          value={totalDiscount.toString()}
+          onChangeText={val => setTotalDiscount(val === '' ? 0 : Number(val))}
+          placeholder="Total Discount"
+          keyboardType="numeric"
+          placeholderTextColor="#888"
+        />
+
         {/* Totals */}
-        <View className="mb-8">
-          <Text className="font-semibold">Subtotal: {subtotal.toFixed(2)}</Text>
-          <Text className="font-semibold">Discount: {discount.toFixed(2)}</Text>
-          <Text className="font-semibold">Grand Total: {grandTotal.toFixed(2)}</Text>
+        <View className="mb-8 mt-2 bg-purple-50 rounded-xl p-4 border border-purple-100">
+          <Text className="font-semibold text-black">Subtotal: <Text className="text-purple-700">{subtotal.toFixed(2)}</Text></Text>
+          <Text className="font-semibold text-black">Item Discounts: <Text className="text-purple-700">{discount.toFixed(2)}</Text></Text>
+          <Text className="font-semibold text-black">Total Discount: <Text className="text-purple-700">{totalDiscount.toFixed(2)}</Text></Text>
+          <Text className="font-semibold text-black">Grand Total: <Text className="text-purple-700">{grandTotal.toFixed(2)}</Text></Text>
         </View>
       </ScrollView>
 
       {/* Fixed Action Buttons */}
       <SafeAreaView
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "white",
-          padding: 16,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          borderTopWidth: 1,
-          borderColor: "#eee",
-        }}
+        className="absolute left-0 right-0 bottom-0 bg-white px-4 py-4 flex-row justify-between border-t border-gray-200"
         edges={["bottom"]}
       >
         <TouchableOpacity
-          style={{
-            backgroundColor: "#e5e7eb",
-            paddingHorizontal: 24,
-            paddingVertical: 12,
-            borderRadius: 9999,
-            marginRight: 8,
-            flex: 1,
-          }}
+          className="bg-gray-100 px-6 py-3 rounded-xl flex-1 mr-2"
           onPress={handleGoBack}
         >
-          <Text style={{ color: "#374151", fontWeight: "600", textAlign: "center" }}>Go Back</Text>
+          <Text className="text-black font-semibold text-center">Go Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{
-            backgroundColor: "#3b82f6",
-            paddingHorizontal: 24,
-            paddingVertical: 12,
-            borderRadius: 9999,
-            marginLeft: 8,
-            flex: 1,
-            opacity: errors.length > 0 ? 0.5 : 1,
-          }}
+          className={`bg-purple-600 px-6 py-3 rounded-xl flex-1 ml-2 ${errors.length > 0 ? 'opacity-50' : ''}`}
           onPress={handlePreview}
           disabled={errors.length > 0}
         >
-          <Text style={{ color: "white", fontWeight: "600", textAlign: "center" }}>Preview</Text>
+          <Text className="text-white font-semibold text-center">Preview</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </SafeAreaView>
