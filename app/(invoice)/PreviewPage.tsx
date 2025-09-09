@@ -9,6 +9,10 @@ import Template2 from "../../components/templates/Template2–CleanCorporate";
 // Add more templates as needed
 import { generateInvoicePDF } from '../../utils/pdfGenerator';
 
+import { getCurrentUser } from '../../services/authService';
+
+
+
 // Accept fullPage prop in template components
 const templates: Record<string, React.ComponentType<{ data: InvoiceData; fullPage?: boolean }>> = {
   "template_1": Template1,
@@ -18,6 +22,9 @@ const templates: Record<string, React.ComponentType<{ data: InvoiceData; fullPag
 
 export default function PreviewPage() {
   const { invoiceData } = useLocalSearchParams();
+  // Get current user
+  const currentUser = getCurrentUser();
+  const userId = currentUser ? currentUser.uid : null;
 
   let data: InvoiceData | null = null;
   try {
@@ -97,7 +104,7 @@ export default function PreviewPage() {
               }}
               onPress={() => {
                 // Save functionality: generate and download PDF
-                generateInvoicePDF(data);
+                generateInvoicePDF(data, data.templateId, userId);
               }}
             >Save</Text>
           </View>

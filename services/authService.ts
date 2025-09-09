@@ -13,3 +13,7 @@ export const login = (email: string, password: string) => {
 export const logout = () => {
   return signOut(auth)
 }
+
+export const getCurrentUser = () => {
+  return auth.currentUser;
+}

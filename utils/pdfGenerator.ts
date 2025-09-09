@@ -1,8 +1,19 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { saveInvoice } from '../services/invoiceService';
 import { InvoiceData } from '../types/invoice';
 
-export async function generateInvoicePDF(data: InvoiceData, templateId?: string) {
+export async function generateInvoicePDF(data: InvoiceData, templateId?: string, userId?: string|null) {
+  // Save invoice to Firestore first
+  // console.log('User ID in PDF generator:', userId);
+  if (userId) {
+    try {
+      await saveInvoice(userId, data);
+    } catch (err) {
+      console.error('Failed to save invoice before PDF:', err);
+    }
+  }
+
   // Use templateId to select layout
   let html = '';
   if (templateId === 'template_2') {
