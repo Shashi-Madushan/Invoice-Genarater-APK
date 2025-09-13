@@ -19,6 +19,8 @@ const DashboardLayout = () => {
               ? "history"
               : route.name === "templates"
               ? "description"
+              : route.name === "stores"
+              ? "store"
               : "person"
           const color = focused ? "#7C3AED" : "#9CA3AF"
           return <MaterialIcons name={name as any} size={28} color={color} />
@@ -28,6 +30,7 @@ const DashboardLayout = () => {
       <Tabs.Screen name="home" options={{ title: "Home" }} />
       <Tabs.Screen name="history" options={{ title: "History" }} />
       <Tabs.Screen name="templates" options={{ title: "Templates" }} />
+      <Tabs.Screen name="stores" options={{ title: "Manage Stores" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
     </Tabs>
   )

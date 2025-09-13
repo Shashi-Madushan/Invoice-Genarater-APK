@@ -1,15 +1,21 @@
+import { getCurrentUser } from "@/services/authService";
+import * as shopService from "@/services/shopService";
+import { Picker } from '@react-native-picker/picker';
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomerDetails, InvoiceItem, ShopDetails } from "../../types/invoice";
+
+interface ShopWithId extends ShopDetails {
+  id: string;
+}
 
 export default function FormPage() {
   const { templateId } = useLocalSearchParams();
   const router = useRouter();
 
   // State for form fields
-  const [storeName, setStoreName] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [date, setDate] = useState("");
   const [shopDetails, setShopDetails] = useState<ShopDetails>({ name: "" });
@@ -19,6 +25,8 @@ export default function FormPage() {
   ]);
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [errors, setErrors] = useState<string[]>([]);
+  const [stores, setStores] = useState<ShopWithId[]>([]);
+  const [selectedShopId, setSelectedShopId] = useState<string>("");
 
   // Calculate totals
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -46,7 +54,6 @@ export default function FormPage() {
 
   const validateInputs = () => {
     const errs: string[] = [];
-    if (!storeName.trim()) errs.push("Store Name is required.");
     if (!date.trim()) errs.push("Date is required.");
     else if (isNaN(new Date(date).getTime())) errs.push("Date format is invalid.");
     if (!shopDetails.name.trim()) errs.push("Shop Name is required.");
@@ -68,7 +75,7 @@ export default function FormPage() {
 
     const invoiceData = {
       templateId: templateId as string,
-      storeName: storeName.trim(),
+      storeName: shopDetails.name.trim(),
       logoUrl: logoUrl.trim(),
       date: new Date(date).toISOString(),
       items: items.map(item => ({
@@ -122,15 +129,41 @@ export default function FormPage() {
   ];
 
   const handleUseDummyData = () => {
-    setStoreName("Demo Store");
+    // Do not set storeName or shopDetails
     setLogoUrl("https://dummyimage.com/100x100/000/fff.png&text=Logo");
     setDate("2024-06-01");
-    setShopDetails(dummyShopDetails);
     setCustomerDetails(dummyCustomerDetails);
     setItems(dummyItems);
     setTotalDiscount(0);
     setErrors([]);
   };
+
+  useEffect(() => {
+    const fetchShops = async () => {
+      const userId = getCurrentUser()?.uid || "demoUserId";
+      try {
+        const shops = await shopService.getShops(userId);
+        setStores(shops as ShopWithId[]);
+      } catch (err) {
+        // handle error
+      }
+    };
+    fetchShops();
+  }, []);
+
+  useEffect(() => {
+    if (selectedShopId) {
+      const shop = stores.find((s: ShopWithId) => s.id === selectedShopId);
+      if (shop) {
+        setShopDetails({
+          name: shop.name || "",
+          address: shop.address || "",
+          phone: shop.phone || "",
+          email: shop.email || ""
+        });
+      }
+    }
+  }, [selectedShopId, stores]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -159,16 +192,6 @@ export default function FormPage() {
           <Text className="text-purple-700 font-semibold text-center">Use Dummy Data</Text>
         </TouchableOpacity>
 
-        {/* Store Name */}
-        <Text className="mt-2 font-semibold text-black">Store Name</Text>
-        <TextInput
-          className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
-          value={storeName}
-          onChangeText={setStoreName}
-          placeholder="Store Name"
-          placeholderTextColor="#888"
-        />
-
         {/* Logo URL */}
         <Text className="font-semibold text-black">Logo URL</Text>
         <TextInput
@@ -189,27 +212,41 @@ export default function FormPage() {
           placeholderTextColor="#888"
         />
 
-        {/* Shop Details */}
+        {/* Select Store */}
+        <Text className="mt-2 font-semibold text-black">Select Store</Text>
+        <View className="border border-gray-300 rounded-xl mb-3 bg-white">
+          <Picker
+            selectedValue={selectedShopId}
+            onValueChange={(itemValue: string) => setSelectedShopId(itemValue)}
+          >
+            <Picker.Item label="Select a store" value="" />
+            {stores.map((store: ShopWithId) => (
+              <Picker.Item key={store.id} label={store.name} value={store.id} />
+            ))}
+          </Picker>
+        </View>
+
+        {/* Shop Details (read-only, filled from selected store) */}
         <Text className="mt-4 font-semibold text-black">Shop Details</Text>
         <View className="space-y-2 mb-2">
           <TextInput
             className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
             value={shopDetails.name}
-            onChangeText={name => setShopDetails({ ...shopDetails, name })}
+            editable={false}
             placeholder="Shop Name"
             placeholderTextColor="#888"
           />
           <TextInput
             className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
             value={shopDetails.address || ""}
-            onChangeText={address => setShopDetails({ ...shopDetails, address })}
+            editable={false}
             placeholder="Shop Address"
             placeholderTextColor="#888"
           />
           <TextInput
             className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
             value={shopDetails.phone || ""}
-            onChangeText={phone => setShopDetails({ ...shopDetails, phone })}
+            editable={false}
             placeholder="Shop Phone"
             keyboardType="phone-pad"
             placeholderTextColor="#888"
@@ -217,7 +254,7 @@ export default function FormPage() {
           <TextInput
             className="mt-2 mb-3 border border-gray-300 rounded-xl px-4 py-3 text-black bg-white focus:border-purple-500"
             value={shopDetails.email || ""}
-            onChangeText={email => setShopDetails({ ...shopDetails, email })}
+            editable={false}
             placeholder="Shop Email"
             keyboardType="email-address"
             placeholderTextColor="#888"
