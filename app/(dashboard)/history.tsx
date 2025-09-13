@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/services/authService"
-import { getInvoices } from "@/services/invoiceService"
+import { deleteInvoice, getInvoices } from "@/services/invoiceService"
 import React, { useEffect, useState } from "react"
 import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -20,6 +20,21 @@ export default function HistoryScreen() {
     }
     fetchInvoices()
   }, [])
+
+  async function handleDelete(invoiceId: string) {
+    setLoading(true)
+    try {
+      const user = await getCurrentUser()
+      if (user?.uid) {
+        await deleteInvoice(user.uid, invoiceId)
+        const data = await getInvoices(user.uid)
+        setInvoices(data)
+      }
+    } catch (err) {
+      console.error('Delete failed:', err)
+    }
+    setLoading(false)
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -56,7 +71,7 @@ export default function HistoryScreen() {
                     <TouchableOpacity onPress={() => console.log('edit', invoice.id)} className="mr-4" hitSlop={{top:8,bottom:8,left:8,right:8}}>
                       <MaterialCommunityIcons name="pencil" size={24} color="#6366F1" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => console.log('delete', invoice.id)} className="ml-2" hitSlop={{top:8,bottom:8,left:8,right:8}}>
+                    <TouchableOpacity onPress={() => handleDelete(invoice.id)} className="ml-2" hitSlop={{top:8,bottom:8,left:8,right:8}}>
                       <MaterialCommunityIcons name="delete" size={24} color="#EF4444" />
                     </TouchableOpacity>
                   </View>
