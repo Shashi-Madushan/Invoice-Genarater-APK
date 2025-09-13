@@ -35,3 +35,5 @@ export type InvoiceData = {
   customerDetails: CustomerDetails; // added customer details
   shopDetails: ShopDetails;         // added shop details
 };
+
+export type ShopWithId = ShopDetails & { id: string };

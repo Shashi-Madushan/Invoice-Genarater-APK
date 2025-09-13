@@ -15,6 +15,8 @@ const Stores = () => {
   const [stores, setStores] = useState<ShopWithId[]>([])
   const [modalVisible, setModalVisible] = useState(false)
   const [newShop, setNewShop] = useState<ShopDetails>({ name: '', address: '', phone: '', email: '' })
+  const [editShopId, setEditShopId] = useState<string | null>(null)
+  const [editShopDetails, setEditShopDetails] = useState<ShopDetails>({ name: '', address: '', phone: '', email: '' })
   const [loading, setLoading] = useState(false)
   const userId = getCurrentUser()?.uid || "demoUserId"
   const fetchShops = async () => {
@@ -40,6 +42,22 @@ const Stores = () => {
         await shopService.addShop(userId, newShop)
         await fetchShops()
         setNewShop({ name: '', address: '', phone: '', email: '' })
+        setModalVisible(false)
+      } catch (err) {
+        // handle error
+      }
+      setLoading(false)
+    }
+  }
+
+  const handleEditShop = async () => {
+    if (editShopId && editShopDetails.name && editShopDetails.address) {
+      setLoading(true)
+      try {
+        await shopService.updateShop(userId, editShopId, editShopDetails)
+        await fetchShops()
+        setEditShopId(null)
+        setEditShopDetails({ name: '', address: '', phone: '', email: '' })
         setModalVisible(false)
       } catch (err) {
         // handle error
@@ -80,7 +98,11 @@ const Stores = () => {
                     {store.email && <Text className="text-sm text-gray-600">Email: {store.email}</Text>}
                   </View>
                   <View className="flex-row ml-2">
-                    <TouchableOpacity onPress={() => console.log('edit', store.id)} className="mr-4" hitSlop={{top:8,bottom:8,left:8,right:8}}>
+                    <TouchableOpacity onPress={() => {
+                      setEditShopId(store.id)
+                      setEditShopDetails({ name: store.name, address: store.address, phone: store.phone || '', email: store.email || '' })
+                      setModalVisible(true)
+                    }} className="mr-4" hitSlop={{top:8,bottom:8,left:8,right:8}}>
                       <MaterialCommunityIcons name="pencil" size={24} color="#6366F1" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => console.log('delete', store.id)} className="ml-2" hitSlop={{top:8,bottom:8,left:8,right:8}}>
@@ -104,45 +126,69 @@ const Stores = () => {
         visible={modalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={() => {
+          setModalVisible(false)
+          setEditShopId(null)
+        }}
       >
         <View className="flex-1 justify-center items-center bg-black/30">
           <View className="bg-white rounded-2xl p-6 w-10/12 shadow-lg">
-            <Text className="text-xl font-bold text-violet-700 mb-4">Add New Shop</Text>
+            <Text className="text-xl font-bold text-violet-700 mb-4">{editShopId ? 'Edit Shop' : 'Add New Shop'}</Text>
             <TextInput
               placeholder="Shop Name"
-              value={newShop.name}
-              onChangeText={text => setNewShop({ ...newShop, name: text })}
+              value={editShopId ? editShopDetails.name : newShop.name}
+              onChangeText={text => {
+                if (editShopId) setEditShopDetails({ ...editShopDetails, name: text })
+                else setNewShop({ ...newShop, name: text })
+              }}
               className="border border-gray-300 rounded-lg p-2 mb-3"
             />
             <TextInput
               placeholder="Shop Address"
-              value={newShop.address}
-              onChangeText={text => setNewShop({ ...newShop, address: text })}
+              value={editShopId ? editShopDetails.address : newShop.address}
+              onChangeText={text => {
+                if (editShopId) setEditShopDetails({ ...editShopDetails, address: text })
+                else setNewShop({ ...newShop, address: text })
+              }}
               className="border border-gray-300 rounded-lg p-2 mb-3"
             />
             <TextInput
               placeholder="Phone (optional)"
-              value={newShop.phone}
-              onChangeText={text => setNewShop({ ...newShop, phone: text })}
+              value={editShopId ? editShopDetails.phone : newShop.phone}
+              onChangeText={text => {
+                if (editShopId) setEditShopDetails({ ...editShopDetails, phone: text })
+                else setNewShop({ ...newShop, phone: text })
+              }}
               className="border border-gray-300 rounded-lg p-2 mb-3"
               keyboardType="phone-pad"
             />
             <TextInput
               placeholder="Email (optional)"
-              value={newShop.email}
-              onChangeText={text => setNewShop({ ...newShop, email: text })}
+              value={editShopId ? editShopDetails.email : newShop.email}
+              onChangeText={text => {
+                if (editShopId) setEditShopDetails({ ...editShopDetails, email: text })
+                else setNewShop({ ...newShop, email: text })
+              }}
               className="border border-gray-300 rounded-lg p-2 mb-3"
               keyboardType="email-address"
               autoCapitalize="none"
             />
             <View className="flex-row justify-end">
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <TouchableOpacity onPress={() => {
+                setModalVisible(false)
+                setEditShopId(null)
+              }}>
                 <Text className="text-gray-500 mr-4">Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleAddShop} disabled={loading}>
-                <Text className="text-violet-700 font-bold">Add</Text>
-              </TouchableOpacity>
+              {editShopId ? (
+                <TouchableOpacity onPress={handleEditShop} disabled={loading}>
+                  <Text className="text-violet-700 font-bold">Update</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={handleAddShop} disabled={loading}>
+                  <Text className="text-violet-700 font-bold">Add</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

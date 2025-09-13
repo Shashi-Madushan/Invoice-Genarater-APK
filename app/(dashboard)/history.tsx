@@ -1,5 +1,6 @@
+import EditInvoicePage from "@/components/EditInvoiceForm"
 import { getCurrentUser } from "@/services/authService"
-import { deleteInvoice, getInvoices } from "@/services/invoiceService"
+import { deleteInvoice, getInvoices, updateInvoice } from "@/services/invoiceService"
 import React, { useEffect, useState } from "react"
 import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -8,6 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 export default function HistoryScreen() {
   const [invoices, setInvoices] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [editingInvoice, setEditingInvoice] = useState<any | null>(null)
 
   useEffect(() => {
     async function fetchInvoices() {
@@ -34,6 +36,25 @@ export default function HistoryScreen() {
       console.error('Delete failed:', err)
     }
     setLoading(false)
+  }
+  async function handleEditSave(updatedInvoice: any) {
+    setLoading(true)
+    try {
+      const user = await getCurrentUser()
+      if (user?.uid && editingInvoice?.id) {
+        await updateInvoice(user.uid, editingInvoice.id, updatedInvoice)
+        const data = await getInvoices(user.uid)
+        setInvoices(data)
+        setEditingInvoice(null)
+      }
+    } catch (err) {
+      console.error('Update failed:', err)
+    }
+    setLoading(false)
+  }
+
+  function handleEditCancel() {
+    setEditingInvoice(null)
   }
 
   return (
@@ -68,7 +89,7 @@ export default function HistoryScreen() {
                     <Text className="text-sm text-gray-600">Total: Rs. {invoice.totals?.grandTotal}</Text>
                   </View>
                   <View className="flex-row ml-2">
-                    <TouchableOpacity onPress={() => console.log('edit', invoice.id)} className="mr-4" hitSlop={{top:8,bottom:8,left:8,right:8}}>
+                    <TouchableOpacity onPress={() => setEditingInvoice(invoice)} className="mr-4" hitSlop={{top:8,bottom:8,left:8,right:8}}>
                       <MaterialCommunityIcons name="pencil" size={24} color="#6366F1" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => handleDelete(invoice.id)} className="ml-2" hitSlop={{top:8,bottom:8,left:8,right:8}}>
@@ -80,6 +101,13 @@ export default function HistoryScreen() {
             ))
           )}
         </ScrollView>
+      )}
+      {editingInvoice && (
+        <EditInvoicePage
+          invoice={editingInvoice}
+          onSave={handleEditSave}
+          onCancel={handleEditCancel}
+        />
       )}
     </SafeAreaView>
   )

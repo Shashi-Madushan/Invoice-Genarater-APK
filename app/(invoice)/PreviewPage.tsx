@@ -80,7 +80,10 @@ export default function PreviewPage() {
           <View className="flex-1 ml-2">
             <TouchableOpacity
               className="bg-blue-600 px-6 py-3 rounded-xl"
-              onPress={() => generateInvoicePDF(data, data.templateId, userId)}
+              onPress={async () => {
+                await generateInvoicePDF(data, data.templateId, userId);
+                router.replace("/home");
+              }}
             >
               <Text className="text-white font-semibold text-center">Save</Text>
             </TouchableOpacity>
