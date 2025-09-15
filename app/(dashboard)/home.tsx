@@ -45,7 +45,7 @@ export default function HomeScreen() {
 
         {/* Dashboard Cards */}
         <View className="flex-row justify-between mb-4">
-          <View className="flex-1 bg-purple-50 rounded-xl shadow-md p-5 mr-2 border border-purple-100 flex-row items-center">
+          <View className="flex-1 bg-purple-50 rounded-xl boxShadow p-5 mr-2 border border-purple-100 flex-row items-center">
             <View className="bg-purple-200 rounded-full p-2 mr-3">
               <MaterialCommunityIcons name="file-document" size={28} color="#7C3AED" />
             </View>
@@ -55,7 +55,7 @@ export default function HomeScreen() {
               <Text className="text-xs text-purple-500 font-semibold">Total Created</Text>
             </View>
           </View>
-          <View className="flex-1 bg-blue-50 rounded-xl shadow-md p-5 ml-2 border border-blue-100 flex-row items-center">
+          <View className="flex-1 bg-blue-50 rounded-xl boxShadow p-5 ml-2 border border-blue-100 flex-row items-center">
             <View className="bg-blue-200 rounded-full p-2 mr-3">
               <FontAwesome5 name="store" size={24} color="#2563EB" />
             </View>
@@ -67,7 +67,7 @@ export default function HomeScreen() {
           </View>
         </View>
         <View className="flex-row justify-between mb-4">
-          <View className="flex-1 bg-green-50 rounded-xl shadow-md p-5 mr-2 border border-green-100 flex-row items-center">
+          <View className="flex-1 bg-green-50 rounded-xl boxShadow p-5 mr-2 border border-green-100 flex-row items-center">
             <View className="bg-green-200 rounded-full p-2 mr-3">
               <Ionicons name="cash" size={28} color="#059669" />
             </View>
@@ -77,7 +77,7 @@ export default function HomeScreen() {
               <Text className="text-xs text-green-600 font-semibold">This Month</Text>
             </View>
           </View>
-          <View className="flex-1 bg-yellow-50 rounded-xl shadow-md p-5 ml-2 border border-yellow-100 flex-row items-center">
+          <View className="flex-1 bg-yellow-50 rounded-xl boxShadow p-5 ml-2 border border-yellow-100 flex-row items-center">
             <View className="bg-yellow-200 rounded-full p-2 mr-3">
               <MaterialCommunityIcons name="file-table" size={28} color="#F59E42" />
             </View>
@@ -91,12 +91,12 @@ export default function HomeScreen() {
 
         {/* Recent Activity Section */}
         <Text className="text-lg font-bold text-black mt-8 mb-2">Recent Activity</Text>
-        <View className="bg-white rounded-xl shadow p-4 border border-gray-100 mb-16">
+        <View className="bg-white rounded-xl boxShadow p-4 border border-gray-100 mb-16">
           {loading ? (
             <Text className="text-gray-500">Loading...</Text>
           ) : dashboard?.recentActivities?.invoices?.length === 0 && dashboard?.recentActivities?.shops?.length === 0 ? (
             <View className="items-center py-6">
-              <Ionicons name="ios-information-circle-outline" size={32} color="#A1A1AA" />
+              <Ionicons name="information-circle-outline" size={32} color="#A1A1AA" />
               <Text className="text-gray-500 mt-2">No recent activity yet.</Text>
             </View>
           ) : (
@@ -127,7 +127,7 @@ export default function HomeScreen() {
 
       {/* Floating Action Button */}
       <TouchableOpacity
-        className="absolute bottom-8 right-6 w-[54px] h-[54px] bg-purple-500 rounded-full items-center justify-center shadow-lg"
+        className="absolute bottom-8 right-6 w-[54px] h-[54px] bg-purple-500 rounded-full items-center justify-center boxShadow"
         onPress={() => setTemplateSelectorVisible(true)}
         activeOpacity={0.8}
       >

@@ -58,42 +58,44 @@ export default function HistoryScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row items-center justify-center mt-6 mb-4">
-        <MaterialCommunityIcons name="file-document-outline" size={28} color="#7C3AED" />
-        <Text className="ml-2 text-2xl font-bold text-purple-700">Invoice History</Text>
+    <SafeAreaView className="flex-1 bg-gradient-to-b from-purple-50 to-white">
+      <View className="flex-row items-center justify-center mt-8 mb-6">
+        <MaterialCommunityIcons name="file-document-outline" size={32} color="#7C3AED" />
+        <Text className="ml-3 text-3xl font-extrabold text-purple-700 tracking-tight">Invoice History</Text>
       </View>
       {loading ? (
-        <Text className="text-center text-gray-500">Loading...</Text>
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-lg text-gray-500">Loading...</Text>
+        </View>
       ) : (
-        <ScrollView className="px-4">
+        <ScrollView className="px-4 pb-8">
           {invoices.length === 0 ? (
-            <View className="items-center mt-16">
-              <MaterialCommunityIcons name="file-remove-outline" size={48} color="#A1A1AA" />
-              <Text className="text-center text-gray-400 mt-4 text-lg">No invoices found.</Text>
+            <View className="items-center mt-24">
+              <MaterialCommunityIcons name="file-remove-outline" size={56} color="#A1A1AA" />
+              <Text className="text-center text-gray-400 mt-6 text-xl font-medium">No invoices found.</Text>
             </View>
           ) : (
             invoices.map((invoice) => (
               <TouchableOpacity
                 key={invoice.id}
-                className="mb-4"
+                className="mb-6"
                 onPress={() => console.log(invoice)}
-                activeOpacity={0.7}
+                activeOpacity={0.85}
               >
-                <View className="flex-row items-center p-4 bg-gray-100 rounded-lg shadow mb-2">
-                  <MaterialCommunityIcons name="file-document" size={32} color="#7C3AED" className="mr-4" />
-                  <View className="flex-1 mr-4">
-                    <Text className="text-lg font-semibold text-purple-700 mb-1">{invoice.storeName}</Text>
-                    <Text className="text-sm text-gray-700 mb-1">Customer: {invoice.customerDetails?.name}</Text>
-                    <Text className="text-sm text-gray-600 mb-1">Date: {invoice.date}</Text>
-                    <Text className="text-sm text-gray-600">Total: Rs. {invoice.totals?.grandTotal}</Text>
+                <View className="flex-row items-center p-5 bg-white rounded-2xl shadow-sm border border-gray-200 mb-1">
+                  <MaterialCommunityIcons name="file-document" size={36} color="#7C3AED" className="mr-5" />
+                  <View className="flex-1 mr-5">
+                    <Text className="text-xl font-bold text-purple-700 mb-1">{invoice.storeName}</Text>
+                    <Text className="text-sm text-gray-700 mb-1">Customer: <Text className="font-medium text-gray-900">{invoice.customerDetails?.name}</Text></Text>
+                    <Text className="text-sm text-gray-600 mb-1">Date: <Text className="font-medium text-gray-800">{invoice.date}</Text></Text>
+                    <Text className="text-sm text-gray-600">Total: <Text className="font-semibold text-green-600">Rs. {invoice.totals?.grandTotal}</Text></Text>
                   </View>
-                  <View className="flex-row ml-2">
-                    <TouchableOpacity onPress={() => setEditingInvoice(invoice)} className="mr-4" hitSlop={{top:8,bottom:8,left:8,right:8}}>
-                      <MaterialCommunityIcons name="pencil" size={24} color="#6366F1" />
+                  <View className="flex-row ml-2 space-x-2">
+                    <TouchableOpacity onPress={() => setEditingInvoice(invoice)} className="bg-purple-100 rounded-full p-2 hover:bg-purple-200 transition" hitSlop={{top:8,bottom:8,left:8,right:8}}>
+                      <MaterialCommunityIcons name="pencil" size={22} color="#6366F1" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleDelete(invoice.id)} className="ml-2" hitSlop={{top:8,bottom:8,left:8,right:8}}>
-                      <MaterialCommunityIcons name="delete" size={24} color="#EF4444" />
+                    <TouchableOpacity onPress={() => handleDelete(invoice.id)} className="bg-red-100 rounded-full p-2 hover:bg-red-200 transition" hitSlop={{top:8,bottom:8,left:8,right:8}}>
+                      <MaterialCommunityIcons name="delete" size={22} color="#EF4444" />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -103,11 +105,15 @@ export default function HistoryScreen() {
         </ScrollView>
       )}
       {editingInvoice && (
-        <EditInvoicePage
-          invoice={editingInvoice}
-          onSave={handleEditSave}
-          onCancel={handleEditCancel}
-        />
+        <View className="absolute inset-0 bg-black/30 flex items-center justify-center z-50">
+          <View className="w-full max-w-xl bg-white rounded-2xl shadow-sm p-6">
+            <EditInvoicePage
+              invoice={editingInvoice}
+              onSave={handleEditSave}
+              onCancel={handleEditCancel}
+            />
+          </View>
+        </View>
       )}
     </SafeAreaView>
   )

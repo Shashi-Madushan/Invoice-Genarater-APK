@@ -67,46 +67,48 @@ const Stores = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row items-center justify-center mt-6 mb-4">
-        <MaterialCommunityIcons name="store-outline" size={28} color="#7C3AED" />
-        <Text className="ml-2 text-2xl font-bold text-purple-700">My Stores</Text>
+    <SafeAreaView className="flex-1 bg-gradient-to-b from-purple-50 to-white">
+      <View className="flex-row items-center justify-center mt-8 mb-6">
+        <MaterialCommunityIcons name="store-outline" size={32} color="#7C3AED" />
+        <Text className="ml-3 text-3xl font-extrabold text-purple-700 tracking-tight">My Stores</Text>
       </View>
       {loading ? (
-        <Text className="text-center text-gray-500">Loading...</Text>
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-lg text-gray-500">Loading...</Text>
+        </View>
       ) : (
-        <ScrollView className="px-4">
+        <ScrollView className="px-4 pb-8">
           {stores.length === 0 ? (
-            <View className="items-center mt-16">
-              <MaterialCommunityIcons name="store-remove" size={48} color="#A1A1AA" />
-              <Text className="text-center text-gray-400 mt-4 text-lg">No stores found.</Text>
+            <View className="items-center mt-24">
+              <MaterialCommunityIcons name="store-remove" size={56} color="#A1A1AA" />
+              <Text className="text-center text-gray-400 mt-6 text-xl font-medium">No stores found.</Text>
             </View>
           ) : (
             stores.map((store) => (
               <TouchableOpacity
                 key={store.id}
-                className="mb-4"
+                className="mb-6"
                 onPress={() => console.log(store)}
-                activeOpacity={0.7}
+                activeOpacity={0.85}
               >
-                <View className="flex-row items-center p-4 bg-gray-100 rounded-lg shadow mb-2">
-                  <MaterialCommunityIcons name="store" size={32} color="#7C3AED" className="mr-4" />
-                  <View className="flex-1 mr-4">
-                    <Text className="text-lg font-semibold text-purple-700 mb-1">{store.name}</Text>
-                    <Text className="text-sm text-gray-700 mb-1">Address: {store.address}</Text>
-                    {store.phone && <Text className="text-sm text-gray-600 mb-1">Phone: {store.phone}</Text>}
-                    {store.email && <Text className="text-sm text-gray-600">Email: {store.email}</Text>}
+                <View className="flex-row items-center p-5 bg-white rounded-2xl shadow-sm border border-gray-200 mb-1">
+                  <MaterialCommunityIcons name="store" size={36} color="#7C3AED" className="mr-5" />
+                  <View className="flex-1 mr-5">
+                    <Text className="text-xl font-bold text-purple-700 mb-1">{store.name}</Text>
+                    <Text className="text-sm text-gray-700 mb-1">Address: <Text className="font-medium text-gray-900">{store.address}</Text></Text>
+                    {store.phone && <Text className="text-sm text-gray-600 mb-1">Phone: <Text className="font-medium text-gray-800">{store.phone}</Text></Text>}
+                    {store.email && <Text className="text-sm text-gray-600">Email: <Text className="font-medium text-gray-800">{store.email}</Text></Text>}
                   </View>
-                  <View className="flex-row ml-2">
+                  <View className="flex-row ml-2 space-x-2">
                     <TouchableOpacity onPress={() => {
                       setEditShopId(store.id)
                       setEditShopDetails({ name: store.name, address: store.address, phone: store.phone || '', email: store.email || '' })
                       setModalVisible(true)
-                    }} className="mr-4" hitSlop={{top:8,bottom:8,left:8,right:8}}>
-                      <MaterialCommunityIcons name="pencil" size={24} color="#6366F1" />
+                    }} className="bg-purple-100 rounded-full p-2 hover:bg-purple-200 transition" hitSlop={{top:8,bottom:8,left:8,right:8}}>
+                      <MaterialCommunityIcons name="pencil" size={22} color="#6366F1" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => console.log('delete', store.id)} className="ml-2" hitSlop={{top:8,bottom:8,left:8,right:8}}>
-                      <MaterialCommunityIcons name="delete" size={24} color="#EF4444" />
+                    <TouchableOpacity onPress={() => console.log('delete', store.id)} className="bg-red-100 rounded-full p-2 hover:bg-red-200 transition" hitSlop={{top:8,bottom:8,left:8,right:8}}>
+                      <MaterialCommunityIcons name="delete" size={22} color="#EF4444" />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -117,7 +119,7 @@ const Stores = () => {
       )}
       <View className="absolute bottom-8 right-8">
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <View className="bg-violet-600 rounded-full w-16 h-16 justify-center items-center shadow-lg">
+          <View className="bg-violet-600 rounded-full w-16 h-16 justify-center items-center shadow-sm">
             <Text className="text-white text-3xl font-bold">+</Text>
           </View>
         </TouchableOpacity>
@@ -132,7 +134,7 @@ const Stores = () => {
         }}
       >
         <View className="flex-1 justify-center items-center bg-black/30">
-          <View className="bg-white rounded-2xl p-6 w-10/12 shadow-lg">
+          <View className="bg-white rounded-2xl p-6 w-10/12 shadow-sm">
             <Text className="text-xl font-bold text-violet-700 mb-4">{editShopId ? 'Edit Shop' : 'Add New Shop'}</Text>
             <TextInput
               placeholder="Shop Name"
