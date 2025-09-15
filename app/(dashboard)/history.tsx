@@ -105,8 +105,8 @@ export default function HistoryScreen() {
         </ScrollView>
       )}
       {editingInvoice && (
-        <View className="absolute inset-0 bg-black/30 flex items-center justify-center z-50">
-          <View className="w-full max-w-xl bg-white rounded-2xl shadow-sm p-6">
+        <View className="absolute inset-0 bg-black/30 z-50">
+          <View className="w-full h-full bg-white">
             <EditInvoicePage
               invoice={editingInvoice}
               onSave={handleEditSave}
