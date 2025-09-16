@@ -1,50 +1,114 @@
-# Welcome to your Expo app 👋
+# Invoice Generator App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Overview
+Invoice Generator is a mobile application built with Expo and React Native that allows users to easily create, manage, and export invoices. The app is designed for freelancers, small businesses, and anyone who needs to generate professional invoices on the go.
 
-## Get started
+## Features & Functionality
+- **Create Invoices:** Add client details, items/services, quantities, prices, and taxes.
+- **Edit & Delete Invoices:** Manage your invoices with full CRUD operations.
+- **Export/Share:** Export invoices as PDF or image and share via email or messaging apps.
+- **Invoice History:** View and manage previously created invoices.
+- **Customizable Templates:** Choose or customize invoice templates for branding.
 
-1. Install dependencies
+## Screenshots
 
+Below are screenshots of various app screens for context:
+
+| Register | Login | Dashboard | Invoice History |
+|----------|-------|-----------|-----------------|
+| <img src="images/regiter.png" width="150"/> | <img src="images/login.png" width="150"/> | <img src="images/dashboard.png" width="150"/> | <img src="images/invoiceHistory.png" width="150"/> |
+
+| Manage Shops | Templates Page | My Account | Template Selector |
+|--------------|---------------|------------|-------------------|
+| <img src="images/manageShopes.png" width="150"/> | <img src="images/templatesPage.png" width="150"/> | <img src="images/userAcount.png" width="150"/> | <img src="images/templateSelect.png" width="150"/> |
+
+| Invoice Form Page | Add Item to Invoice Form | Invoice Preview | Save PDF Page |
+|-------------------|-------------------------|-----------------|--------------|
+| <img src="images/formPage.png" width="150"/> | <img src="images/formpageItemadd.png" width="150"/> | <img src="images/previewpage.png" width="150"/> | <img src="images/savepdfpage.png" width="150"/> |
+
+## File & Folder Structure
+```
+Invoice-Genarater/
+├── app/                        # Main application code
+│   ├── (dashboard)/            # Dashboard-related screens (home, history, stores, templates, profile)
+│   │   ├── _layout.tsx         # Dashboard tab layout
+│   │   ├── home.tsx            # Dashboard home screen
+│   │   ├── history.tsx         # Invoice history screen
+│   │   └── ...                 # Other dashboard screens
+│   ├── (invoice)/              # Invoice-related screens
+│   │   ├── PreviewPage.tsx     # Invoice preview screen
+│   │   ├── TemplateSelector.tsx# Template selection screen
+│   │   └── ...                 # Other invoice screens
+│   ├── _layout.tsx             # Root layout (providers, slot)
+│   └── ...                     # Other app files
+├── components/                 # Reusable UI components
+│   └── templates/              # Invoice templates
+│       ├── Template1-minimalModern.tsx
+│       ├── Template2–CleanCorporate.tsx
+│       └── ...                 # Other templates
+├── services/                   # Service modules (API, dashboard logic)
+│   ├── dashBoardService.ts
+│   └── ...                     # Other services
+├── types/                      # TypeScript types (e.g., invoice types)
+│   └── invoice.ts
+├── utils/                      # Utility functions (PDF generation, formatting, etc.)
+│   └── pdfGenerator.ts
+├── assets/                     # Images, fonts, icons, splash screens
+│   └── images/
+├── images/                     # Screenshots and documentation images
+│   ├── home.png
+│   ├── create-invoice.png
+│   └── ...                     # Other images
+├── app-example/                # Starter/example code
+├── .vscode/                    # VS Code settings
+│   └── settings.json
+├── global.css                  # Tailwind CSS config
+├── package.json                # Project dependencies and scripts
+├── app.json                    # Expo app configuration
+├── tsconfig.json               # TypeScript configuration
+├── babel.config.js             # Babel configuration
+├── metro.config.js             # Metro bundler configuration
+├── tailwind.config.js          # Tailwind CSS configuration
+├── .gitignore                  # Git ignore rules
+├── README.md                   # Project documentation
+```
+
+## How to Run the App
+1. **Install dependencies:**
    ```bash
    npm install
    ```
-
-2. Start the app
-
+2. **Start the development server:**
    ```bash
    npx expo start
    ```
+3. **Open the app:**
+   - Scan the QR code with Expo Go (Android/iOS)
+   - Use an emulator (Android Studio/iOS Simulator)
+   - Open in a development build
 
-In the output, you'll find options to open the app in a
+## How to Build APK (Android)
+1. **Login to Expo:**
+   ```bash
+   npx expo login
+   ```
+2. **Build the APK:**
+   ```bash
+   npx expo build:android -t apk
+   ```
+   Or for EAS Build (recommended):
+   ```bash
+   npx eas build -p android --profile preview
+   ```
+3. **Download the APK:**
+   - After build completes, download the APK from the Expo dashboard or the provided link.
+   - Install the APK on your device or share with others.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Resources
+- [Expo Documentation](https://docs.expo.dev/)
+- [React Native Documentation](https://reactnative.dev/)
+- [EAS Build Guide](https://docs.expo.dev/build/introduction/)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Community & Support
+- [Expo GitHub](https://github.com/expo/expo)
+- [Expo Discord](https://chat.expo.dev)
