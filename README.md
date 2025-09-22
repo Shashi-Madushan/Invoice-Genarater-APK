@@ -12,6 +12,12 @@ Invoice Generator is a mobile application built with Expo and React Native that 
 
 > <span style="color: #1976d2;"><b>Download the latest APK from the <a href="https://github.com/Shashi-Madushan/Invoice-Genarater-APK/releases">Releases</a> section.</b></span>
 
+## Demo Video
+
+[![Demo Video](https://img.youtube.com/vi/EnfrfrshJvQ/0.jpg)](https://youtube.com/shorts/EnfrfrshJvQ?feature=share)
+
+Watch a short demo of the app [here](https://youtube.com/shorts/EnfrfrshJvQ?feature=share).
+
 ## Screenshots
 
 Below are screenshots of various app screens for context:
