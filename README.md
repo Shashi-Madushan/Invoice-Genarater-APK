@@ -10,6 +10,8 @@ Invoice Generator is a mobile application built with Expo and React Native that 
 - **Invoice History:** View and manage previously created invoices.
 - **Customizable Templates:** Choose or customize invoice templates for branding.
 
+> <span style="color: #1976d2;"><b>Download the latest APK from the <a href="https://github.com/Shashi-Madushan/Invoice-Genarater-APK/releases">Releases</a> section.</b></span>
+
 ## Screenshots
 
 Below are screenshots of various app screens for context:
@@ -102,6 +104,7 @@ Invoice-Genarater/
    ```
 3. **Download the APK:**
    - After build completes, download the APK from the Expo dashboard or the provided link.
+   - **Or simply download the latest APK from the [Releases](https://github.com/Shashi-Madushan/Invoice-Genarater-APK/releases) section of this repository.**
    - Install the APK on your device or share with others.
 
 ## Resources
